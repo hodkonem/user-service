@@ -1,0 +1,26 @@
+server:
+  port: ${USER_SERVICE_PORT:8080}
+
+spring:
+  application:
+    name: user-service
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:user_service}
+    username: ${POSTGRES_USER:user_service_user}
+    password: ${POSTGRES_PASSWORD:user_service_password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
