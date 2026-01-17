@@ -1,7 +1,9 @@
 springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
   swagger-ui:
+    enabled: true
     path: /swagger-ui
     operationsSorter: method
     tagsSorter: alpha
-  api-docs:
-    path: /v3/api-docs
