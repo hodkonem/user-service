@@ -11,16 +11,16 @@ spring:
     password: ${POSTGRES_PASSWORD:user_service_password}
     driver-class-name: org.postgresql.Driver
 
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    producer:
-      client-id: user-service
-      acks: all
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.add.type.headers: false
-        enable.idempotence: true
+  spring:
+    kafka:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+      producer:
+        client-id: user-service
+        acks: all
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+        properties:
+          enable.idempotence: true
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml

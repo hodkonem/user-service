@@ -1,7 +1,6 @@
 package ru.itwizardry.userservice.kafka.dto;
 
 public record UserEventDto(
-        String operation,
+        UserOperation operation,
         String email
-) {
-}
+) {}
