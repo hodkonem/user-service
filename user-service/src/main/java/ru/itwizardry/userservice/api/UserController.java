@@ -10,10 +10,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.itwizardry.userservice.api.error.ApiError;
+import ru.itwizardry.userservice.api.hateoas.UserModelAssembler;
 import ru.itwizardry.userservice.dto.UserCreateRequest;
 import ru.itwizardry.userservice.dto.UserDto;
 import ru.itwizardry.userservice.dto.UserUpdateRequest;
@@ -22,6 +25,7 @@ import ru.itwizardry.userservice.service.UserService;
 import java.net.URI;
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import static ru.itwizardry.userservice.api.docs.SwaggerExamples.*;
 
 @Tag(name = "Users")
@@ -31,6 +35,7 @@ import static ru.itwizardry.userservice.api.docs.SwaggerExamples.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserModelAssembler assembler;
 
     @Operation(summary = "Create user")
     @ApiResponses({
@@ -53,7 +58,7 @@ public class UserController {
             )
     })
     @PostMapping
-    public ResponseEntity<UserDto> create(@Valid @RequestBody UserCreateRequest request) {
+    public ResponseEntity<EntityModel<UserDto>> create(@Valid @RequestBody UserCreateRequest request) {
         UserDto created = userService.createUser(request);
 
         URI location = ServletUriComponentsBuilder
@@ -62,7 +67,7 @@ public class UserController {
                 .buildAndExpand(created.id())
                 .toUri();
 
-        return ResponseEntity.created(location).body(created);
+        return ResponseEntity.created(location).body(assembler.toModel(created));
     }
 
     @Operation(summary = "Get user by id")
@@ -78,11 +83,12 @@ public class UserController {
             )
     })
     @GetMapping("/{id}")
-    public UserDto getById(
+    public EntityModel<UserDto> getById(
             @Parameter(description = "User id", example = "1")
             @PathVariable Long id
     ) {
-        return userService.getUserById(id);
+        UserDto user = userService.getUserById(id);
+        return assembler.toModel(user);
     }
 
     @Operation(summary = "Get users", description = "Returns all users or filters by age")
@@ -90,14 +96,22 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "OK")
     })
     @GetMapping
-    public List<UserDto> getAll(
+    public CollectionModel<EntityModel<UserDto>> getAll(
             @Parameter(description = "Optional age filter", example = "30")
             @RequestParam(required = false) Integer age
     ) {
-        if (age != null) {
-            return userService.findByAge(age);
-        }
-        return userService.getAllUsers();
+        List<UserDto> users = (age != null)
+                ? userService.findByAge(age)
+                : userService.getAllUsers();
+
+        List<EntityModel<UserDto>> content = users.stream()
+                .map(assembler::toModel)
+                .toList();
+
+        return CollectionModel.of(
+                content,
+                linkTo(methodOn(UserController.class).getAll(age)).withSelfRel()
+        );
     }
 
     @Operation(summary = "Update user")
@@ -129,12 +143,13 @@ public class UserController {
             )
     })
     @PutMapping("/{id}")
-    public UserDto update(
+    public EntityModel<UserDto> update(
             @Parameter(description = "User id", example = "1")
             @PathVariable Long id,
             @Valid @RequestBody UserUpdateRequest request
     ) {
-        return userService.updateUser(id, request);
+        UserDto updated = userService.updateUser(id, request);
+        return assembler.toModel(updated);
     }
 
     @Operation(summary = "Delete user")
