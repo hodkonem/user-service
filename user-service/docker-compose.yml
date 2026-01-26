@@ -17,7 +17,7 @@ services:
       timeout: 3s
       retries: 20
     networks:
-      - app-net
+      - itw-dev-net
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -30,7 +30,7 @@ services:
     ports:
       - "${ZOOKEEPER_PORT:-2181}:2181"
     networks:
-      - app-net
+      - itw-dev-net
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
@@ -42,11 +42,10 @@ services:
     ports:
       - "${KAFKA_PORT:-9092}:9092"
     environment:
-      # broker basics
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "user-service-zookeeper:2181"
 
-      # two listeners: one for host, one for docker network
+      # listeners: host + docker network
       KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092,PLAINTEXT_INTERNAL://0.0.0.0:29092"
       KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://${KAFKA_ADVERTISED_HOST:-localhost}:${KAFKA_PORT:-9092},PLAINTEXT_INTERNAL://kafka:29092"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT"
@@ -61,13 +60,13 @@ services:
       KAFKA_LOG_RETENTION_HOURS: 48
       KAFKA_LOG_SEGMENT_BYTES: 1073741824
     networks:
-      app-net:
+      itw-dev-net:
         aliases:
           - kafka
 
 networks:
-  app-net:
-    name: itw-dev-net
+  itw-dev-net:
+    external: true
 
 volumes:
   user_service_pg_data:
