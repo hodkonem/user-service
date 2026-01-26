@@ -1,22 +1,22 @@
 # user-service
 
-**user-service** — backend сервис управления пользователями, реализующий REST CRUD API и публикующий доменные события в Kafka для асинхронной интеграции с другими сервисами (например, `notification-service`).
+**user-service** — backend сервис управления пользователями, реализующий REST CRUD API с поддержкой **HATEOAS** и публикацией доменных событий в Kafka для асинхронной интеграции с другими сервисами (например, `notification-service`).
 
-Проект реализован в production-стиле с валидацией, единым форматом ошибок, Kafka-событиями и интеграционными тестами.
+Проект реализован в production-стиле с валидацией, единым форматом ошибок, Swagger-документацией и event-driven интеграцией.
 
 ---
 
 ## 🚀 Features
 
 - REST CRUD API для пользователей (DTO-based)
+- HATEOAS (hypermedia links в ответах)
 - Валидация входных данных (`@Valid`)
 - Единый формат ошибок API
 - Публикация Kafka-событий:
   - `CREATED`
   - `DELETED`
-- Асинхронная интеграция с `notification-service`
 - PostgreSQL + Liquibase
-- Swagger / OpenAPI
+- Swagger / OpenAPI (Springdoc)
 - Интеграционные и контроллерные тесты
 
 ---
@@ -25,26 +25,26 @@
 
 - Java 21
 - Spring Boot 3.5.x
-- Spring Web / Validation / Data JPA
+- Spring Web / Validation / Data JPA / HATEOAS
 - Apache Kafka
 - PostgreSQL
 - Liquibase
 - MapStruct
 - JUnit 5 / MockMvc
-- Docker (dev environment)
+- Docker (local dev)
 - Gradle
 
 ---
 
-## 📦 API Overview
+## 📦 API Overview (HATEOAS)
 
 ### Create user
+
 ```http
 POST /api/users
-````
+```
 
 **Request**
-
 ```json
 {
   "name": "Mikhail",
@@ -54,14 +54,19 @@ POST /api/users
 ```
 
 **Response — 201 Created**
-
 ```json
 {
   "id": 1,
   "name": "Mikhail",
   "email": "mikhail@test.com",
   "age": 30,
-  "createdAt": "2026-01-20T13:31:06"
+  "createdAt": "2026-01-20T13:31:06",
+  "_links": {
+    "self": { "href": "http://localhost:8080/api/users/1" },
+    "users": { "href": "http://localhost:8080/api/users" },
+    "update": { "href": "http://localhost:8080/api/users/1" },
+    "delete": { "href": "http://localhost:8080/api/users/1" }
+  }
 }
 ```
 
@@ -75,19 +80,7 @@ GET /api/users/{id}
 
 ---
 
-### Delete user
-
-```http
-DELETE /api/users/{id}
-```
-
-**Response — 204 No Content**
-
----
-
 ## ❌ Error Handling
-
-Все ошибки возвращаются в **едином формате**:
 
 ```json
 {
@@ -100,100 +93,27 @@ DELETE /api/users/{id}
 }
 ```
 
-### Supported error codes
-
-| HTTP | Code                 | Description             |
-| ---: | -------------------- | ----------------------- |
-|  400 | VALIDATION_ERROR     | Invalid request payload |
-|  404 | USER_NOT_FOUND       | User does not exist     |
-|  409 | EMAIL_ALREADY_EXISTS | Duplicate email         |
-
 ---
 
 ## 📣 Kafka Integration
 
-* **Topic:** `user.notifications`
-* **Producer:** `user-service`
-* **Consumer:** `notification-service`
-
-### Event payload
-
-```json
-{
-  "operation": "CREATED",
-  "email": "mikhail@test.com"
-}
-```
-
-Events are published **only after successful DB transaction**.
-
----
-
-## 🧪 Tests
-
-```bash
-./gradlew clean test
-```
-
-* Controller tests (`@WebMvcTest`)
-* Integration tests (`@SpringBootTest`)
-* Kafka flow verified end-to-end with MailHog
-
-**Status:** ✅ 100% passing (14 tests)
+- **Topic:** `user.notifications`
+- **Producer:** `user-service`
+- **Consumer:** `notification-service`
 
 ---
 
 ## 🛠 Local Development
 
-### Required services
-
-* PostgreSQL
-* Kafka
-* MailHog
-
-### Local endpoints
-
-| Service    | URL                                            |
-| ---------- | ---------------------------------------------- |
-| User API   | [http://localhost:8080](http://localhost:8080) |
-| Kafka UI   | [http://localhost:8089](http://localhost:8089) |
-| MailHog UI | [http://localhost:8025](http://localhost:8025) |
-
----
-
-## 📚 API Documentation
-
-Swagger UI available at:
+Swagger UI:
 
 ```
-http://localhost:8080/swagger-ui.html
+http://localhost:8080/swagger-ui/index.html
 ```
-
----
-
-## 🔖 Release
-
-Current stable version:
-
-```
-v1.0.0
-```
-
----
-
-## 🧠 Notes
-
-* Service is designed for **microservice architecture**
-* No direct coupling with notification logic
-* Kafka used for async, event-driven communication
-* Ready for further extension (UPDATE events, retries, idempotency)
 
 ---
 
 ## 👤 Author
 
-Mikhail Latypov
-GitHub: [https://github.com/hodkonem](https://github.com/hodkonem)
-
-```
-
+Mikhail Latypov  
+GitHub: https://github.com/hodkonem
