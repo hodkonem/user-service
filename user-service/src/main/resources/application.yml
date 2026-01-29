@@ -1,35 +1,14 @@
-server:
-  port: ${USER_SERVICE_PORT:8080}
-
 spring:
   application:
     name: user-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
 
-  datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:user_service}
-    username: ${POSTGRES_USER:user_service_user}
-    password: ${POSTGRES_PASSWORD:user_service_password}
-    driver-class-name: org.postgresql.Driver
-
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    producer:
-      client-id: user-service
-      acks: all
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-      properties:
-        enable.idempotence: true
-
-  liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.yaml
-
-  jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-
-app:
-  kafka:
-    topic: ${KAFKA_USER_EVENTS_TOPIC:user.notifications}
+  cloud:
+    config:
+      fail-fast: false
+      retry:
+        max-attempts: 10
+        initial-interval: 1000
+        multiplier: 1.5
+        max-interval: 5000

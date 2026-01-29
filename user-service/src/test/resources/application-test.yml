@@ -1,4 +1,7 @@
 spring:
+  config:
+    import:
+
   liquibase:
     enabled: false
 
@@ -15,7 +18,18 @@ spring:
   kafka:
     listener:
       auto-startup: false
+    bootstrap-servers: dummy:9092
+
+app:
+  kafka:
+    topic: user.notifications
+  outbox:
+    enabled: false
+    publish-rate-ms: 1000
+    batch-size: 50
 
 springdoc:
   swagger-ui:
+    enabled: false
+  api-docs:
     enabled: false
