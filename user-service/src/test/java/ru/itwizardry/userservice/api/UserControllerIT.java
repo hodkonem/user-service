@@ -119,7 +119,12 @@ class UserControllerIT {
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$._embedded.userDtoList.length()").value(1))
+                .andExpect(jsonPath("$._embedded.userDtoList[0].id").value(id))
+                .andExpect(jsonPath("$._embedded.userDtoList[0].name").value("New"))
+                .andExpect(jsonPath("$._embedded.userDtoList[0].email").value("new@test.com"))
+                .andExpect(jsonPath("$._embedded.userDtoList[0].age").value(31));
+
     }
 
     @Test
