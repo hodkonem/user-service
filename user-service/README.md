@@ -1,6 +1,6 @@
 # user-service
 
-**user-service** — backend сервис управления пользователями, реализующий REST CRUD API с поддержкой **HATEOAS** и публикацией доменных событий в Kafka для асинхронной интеграции с другими сервисами (например, `notification-service`).
+**user-service** — backend-сервис управления пользователями, реализующий REST CRUD API с поддержкой **HATEOAS** и публикацией доменных событий в Kafka для асинхронной интеграции с другими сервисами (например, `notification-service`).
 
 Проект реализован в production-стиле с валидацией, единым форматом ошибок, Swagger-документацией и event-driven интеграцией.
 
@@ -36,6 +36,39 @@
 
 ---
 
+## ⚙️ Configuration (Spring Cloud Config)
+
+`user-service` uses **Spring Cloud Config** to load configuration from a centralized configuration repository.
+
+### Default configuration source
+- **Config Server:** `http://localhost:8888`
+- **Config label (branch):** `develop`
+
+The service expects configuration files to be stored in a separate **config-repo**, organized by application name and profile.
+
+### Overriding configuration source
+
+You can override the config server or label via environment variables:
+
+```bash
+CONFIG_SERVER_URL=http://localhost:8888
+SPRING_CLOUD_CONFIG_LABEL=main
+````
+
+Example local run with overridden label:
+
+```bash
+SPRING_CLOUD_CONFIG_LABEL=main ./gradlew bootRun
+```
+
+### Profiles
+
+* `default` – production-like configuration loaded from Config Server
+* `test` – used for unit and controller tests
+* `kafka-it` – used for Kafka integration tests (Testcontainers)
+
+---
+
 ## 📦 API Overview (HATEOAS)
 
 ### Create user
@@ -45,6 +78,7 @@ POST /api/users
 ```
 
 **Request**
+
 ```json
 {
   "name": "Mikhail",
@@ -54,6 +88,7 @@ POST /api/users
 ```
 
 **Response — 201 Created**
+
 ```json
 {
   "id": 1,
@@ -97,9 +132,9 @@ GET /api/users/{id}
 
 ## 📣 Kafka Integration
 
-- **Topic:** `user.notifications`
-- **Producer:** `user-service`
-- **Consumer:** `notification-service`
+* **Topic:** `user.notifications`
+* **Producer:** `user-service`
+* **Consumer:** `notification-service`
 
 ---
 
@@ -115,5 +150,5 @@ http://localhost:8080/swagger-ui/index.html
 
 ## 👤 Author
 
-Mikhail Latypov  
-GitHub: https://github.com/hodkonem
+Mikhail Latypov
+GitHub: [https://github.com/hodkonem](https://github.com/hodkonem)
