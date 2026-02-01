@@ -1,14 +1,13 @@
-### Environment ###
-.env
-.env.*
-!.env.example
-
-### Gradle ###
-.gradle/
+HELP.md
+.gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+.env
+.env.*
+!.env.example
+
 
 ### STS ###
 .apt_generated
@@ -23,7 +22,7 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.idea/
+.idea
 *.iws
 *.iml
 *.ipr
@@ -40,10 +39,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-### Logs ###
-*.log
-
-### OS ###
-.DS_Store
-Thumbs.db

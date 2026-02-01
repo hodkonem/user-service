@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: jdbc:postgresql://itw-postgres:5432/${POSTGRES_DB:user_service}
+    username: ${POSTGRES_USER:user_service_user}
+    password: ${POSTGRES_PASSWORD:user_service_password}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  kafka:
+    bootstrap-servers: kafka:29092
+
+server:
+  port: 8080
