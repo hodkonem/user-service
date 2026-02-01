@@ -1,0 +1,50 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+      fail-fast: false
+      import-check:
+        enabled: false
+
+  config:
+    import: ""
+
+  liquibase:
+    enabled: false
+
+  datasource:
+    hikari:
+      connection-timeout: 1000
+      validation-timeout: 1000
+      initialization-fail-timeout: 0
+      max-lifetime: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    open-in-view: false
+
+  kafka:
+    listener:
+      auto-startup: false
+    bootstrap-servers: dummy:9092
+
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
+
+app:
+  kafka:
+    topic: user.notifications
+  outbox:
+    enabled: false
+    publish-rate-ms: 1000
+    batch-size: 50
+
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false

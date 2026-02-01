@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.itwizardry.userservice.BaseTest;
 import ru.itwizardry.userservice.api.hateoas.UserModelAssembler;
 import ru.itwizardry.userservice.dto.UserCreateRequest;
 import ru.itwizardry.userservice.dto.UserDto;
@@ -28,9 +29,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ActiveProfiles("test")
 @WebMvcTest(UserController.class)
-class UserControllerTest {
+class UserControllerTest extends BaseTest {
 
     @Autowired
     MockMvc mockMvc;
