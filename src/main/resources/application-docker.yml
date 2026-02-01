@@ -2,6 +2,14 @@ spring:
   application:
     name: user-service
 
+  config:
+    import: configserver:${CONFIG_SERVER_URL:http://config-server:8888}
+
+  cloud:
+    config:
+      label: ${CONFIG_LABEL:develop}
+      fail-fast: true
+
   datasource:
     url: jdbc:postgresql://itw-postgres:5432/${POSTGRES_DB:user_service}
     username: ${POSTGRES_USER:user_service_user}

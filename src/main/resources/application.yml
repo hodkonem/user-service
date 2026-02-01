@@ -8,4 +8,4 @@ spring:
   cloud:
     config:
       label: ${CONFIG_LABEL:develop}
-      fail-fast: true
+      fail-fast: false
