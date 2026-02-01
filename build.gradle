@@ -41,6 +41,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
     implementation 'org.liquibase:liquibase-core'
     runtimeOnly 'org.postgresql:postgresql'
@@ -65,6 +66,16 @@ dependencies {
     testImplementation 'org.testcontainers:postgresql'
 }
 
-tasks.named('test') {
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test).configureEach {
     useJUnitPlatform()
+    jvmArgs += [
+            "-Dfile.encoding=UTF-8",
+            "-Dsun.jnu.encoding=UTF-8",
+            "-Dsun.stdout.encoding=UTF-8",
+            "-Dsun.stderr.encoding=UTF-8"
+    ]
 }

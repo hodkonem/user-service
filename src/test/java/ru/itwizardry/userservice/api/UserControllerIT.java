@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import ru.itwizardry.userservice.BaseTest;
 import ru.itwizardry.userservice.dto.UserCreateRequest;
 import ru.itwizardry.userservice.dto.UserUpdateRequest;
 import ru.itwizardry.userservice.kafka.publisher.UserEventPublisher;
@@ -26,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Testcontainers
 @SpringBootTest
 @AutoConfigureMockMvc
-class UserControllerIT {
+class UserControllerIT extends BaseTest {
 
     @MockitoBean
     private UserEventPublisher userEventPublisher;
